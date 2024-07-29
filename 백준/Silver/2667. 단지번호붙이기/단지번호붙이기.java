@@ -5,46 +5,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static int house = 0;
+    public static int HOUSE_COUNT = 0;
+    public static int N = 0;
+    public static char[][] MAP;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
-        char[][] map = new char[n][n];
-        for (int i = 0; i < n; i++) {
+        N = Integer.parseInt(br.readLine());
+        MAP = new char[N][N];
+
+        // map에 입력받은 값 저장
+        for (int i = 0; i < N; i++) {
             String line = br.readLine();
-            for (int j = 0; j < n; j++) {
-                map[i][j] = line.charAt(j);
+            for (int j = 0; j < N; j++) {
+                MAP[i][j] = line.charAt(j);
             }
         }
-        int count = 0;
+
+        int groupCount = 0;
         List<Integer> houses = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                house = 0;
-                if (map[i][j] == '1') {
-                    bfs(n, i, j, map);
-                    count++;
-                    houses.add(house);
+        // 행렬을 순회하며 집이 존재하면('1') 상하좌우 DFS 진행
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                HOUSE_COUNT = 0;
+                if (MAP[i][j] == '1') {
+                    dfs(i, j);
+                    groupCount++;
+                    houses.add(HOUSE_COUNT);
                 }
             }
 
         }
-        System.out.println(count);
+        
+        // 출력
+        System.out.println(groupCount);
         houses.stream().sorted().forEach(System.out::println);
     }
 
-    private static void bfs(int n, int i, int j, char[][] map) {
-        if (i < 0 || j < 0 || i >= n || j >= n || map[i][j] == '0') {
+    private static void dfs(int i, int j) {
+        if (i < 0 || j < 0 || i >= N || j >= N || MAP[i][j] == '0') {
             return;
         }
 
-        map[i][j] = '0';
-        house++;
+        // 집을 발견한 경우 0 처리, 집의 수 + 1
+        MAP[i][j] = '0';
+        HOUSE_COUNT++;
 
-        bfs(n, i - 1, j, map);
-        bfs(n, i + 1, j, map);
-        bfs(n, i, j - 1, map);
-        bfs(n, i, j + 1, map);
+        dfs(i - 1, j);
+        dfs(i + 1, j);
+        dfs(i, j - 1);
+        dfs(i, j + 1);
     }
 }
