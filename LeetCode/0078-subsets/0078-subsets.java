@@ -1,22 +1,18 @@
 class Solution {
     public List<List<Integer>> subsets(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        for (int i = 0; i < nums.length + 1; i++) {
-            backTrack(result, nums, new ArrayList<>(), i, 0);
-        }
+                dfs(result, nums, 0, new ArrayDeque<>());
+
         return result;
     }
 
-    private void backTrack(List<List<Integer>> result, int[] nums, List<Integer> path, int n, int startIdx) {
-        if (path.size() == n) {
-            result.add(new ArrayList<>(path));
-            return;
-        }
+    private void dfs(List<List<Integer>> results, int[] nums, int index, Deque<Integer> path) {
+        results.add(new ArrayList<>(path));
 
-        for (int i = startIdx; i < nums.length; i++) {
+        for (int i = index; i < nums.length; i++) {
             path.add(nums[i]);
-            backTrack(result, nums, path, n, i + 1);
-            path.remove(path.size() - 1);
+            dfs(results, nums, i + 1, path);
+            path.removeLast();
         }
     }
 }
