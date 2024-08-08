@@ -1,22 +1,23 @@
 class Solution {
     public List<List<Integer>> subsets(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        dfs(result, nums, 0, new ArrayDeque<>());
-
+       for (int i = 0; i < nums.length + 1; i++) {
+           backTrack(result, nums, new ArrayList<>(), i, 0);
+       }
         return result;
     }
 
-    private void dfs(List<List<Integer>> results, int[] nums, int index, Deque<Integer> path) {
-        // 모든 탐색 경로를 결과에 저장한다. 빈 집합('[]')도 맨 처음 저장된다.
-        results.add(new ArrayList<>(path));
+    private void backTrack(List<List<Integer>> result, int[] nums, List<Integer> path, int n, int startIdx) {
+        // 부분 집합의 크기를 고정하여(int n) 모든 조합 탐색
+        if (path.size() == n) {
+            result.add(new ArrayList<>(path));
+            return;
+        }
 
-        // 가장 처음 0이 index로 들어온다.
-        // 저장된 nums[0]은 다음 재귀함수 호출 시 먼저 저장된다.
-        // index는 1이 되어 nums[1]부터 반복을 시작한다.
-        for (int i = index; i < nums.length; i++) {
+        for (int i = startIdx; i < nums.length; i++) {
             path.add(nums[i]);
-            dfs(results, nums, i + 1, path);
-            path.removeLast();
+            backTrack(result, nums, path, n, i + 1);
+            path.remove(path.size() - 1);
         }
     }
 }
