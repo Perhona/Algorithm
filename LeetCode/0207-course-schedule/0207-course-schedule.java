@@ -1,34 +1,38 @@
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-    int[] inDegree = new int[numCourses];
-    List<List<Integer>> adjList = new ArrayList<>();
-    for (int i = 0; i < numCourses; i++) {
-        adjList.add(new ArrayList<>());
-    }
-    
-    for (int[] pre : prerequisites) {
-        adjList.get(pre[1]).add(pre[0]);
-        inDegree[pre[0]]++;
-    }
-    
-    Queue<Integer> queue = new LinkedList<>();
-    for (int i = 0; i < numCourses; i++) {
-        if (inDegree[i] == 0) {
-            queue.offer(i);
+        Map<Integer, List<Integer>> finishToTakeMap = new HashMap<>();
+        for (int[] pre : prerequisites) {
+            finishToTakeMap.putIfAbsent(pre[0], new ArrayList<>());
+            finishToTakeMap.get(pre[0]).add(pre[1]);
         }
-    }
-    
-    int count = 0;
-    while (!queue.isEmpty()) {
-        int course = queue.poll();
-        count++;
-        for (int nextCourse : adjList.get(course)) {
-            if (--inDegree[nextCourse] == 0) {
-                queue.offer(nextCourse);
+
+        // 처리해야 하는 노드
+        List<Integer> takes = new ArrayList<>();
+        List<Integer> taken = new ArrayList<>();
+        for (Integer finish : finishToTakeMap.keySet()) {
+//            if (!dfs(finishToTakeMap, finish, takes)) {
+            if (!dfs(finishToTakeMap, finish, takes, taken)) {
+                return false;
             }
         }
+        return true;
     }
-    
-    return count == numCourses;
+
+    private boolean dfs(Map<Integer, List<Integer>> finishToTakeMap, Integer finish, List<Integer> takes, List<Integer> taken) {
+        if (takes.contains(finish)) return false;
+        if (taken.contains(finish)) return true;
+
+        if (finishToTakeMap.containsKey(finish)) {
+            takes.add(finish);
+
+            for (Integer take : finishToTakeMap.get(finish)) {
+                if (!dfs(finishToTakeMap, take, takes, taken)) {
+                    return false;
+                }
+            }
+            takes.remove(finish);
+            taken.add(finish);
+        }
+        return true;
     }
 }
