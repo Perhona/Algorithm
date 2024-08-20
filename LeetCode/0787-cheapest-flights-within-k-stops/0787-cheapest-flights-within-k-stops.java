@@ -13,45 +13,44 @@ class Solution {
         PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
         pq.add(new int[]{src, 0, 0});
 
-        // 최소 비용을 추적하는 배열, 초기값은 매우 큰 값으로 설정
-        int[] minPrice = new int[n];
-        Arrays.fill(minPrice, Integer.MAX_VALUE);
-        minPrice[src] = 0;
+        // 비용 배열 초기화
+        int[] prices = new int[n];
+        Arrays.fill(prices, Integer.MAX_VALUE);
+        prices[src] = 0;
 
-        // 경유 횟수를 추적하는 배열, 초기값은 매우 큰 값으로 설정
-        int[] minStops = new int[n];
-        Arrays.fill(minStops, Integer.MAX_VALUE);
-        minStops[src] = 0;
+        int[] stops = new int[n];
+        Arrays.fill(stops, Integer.MAX_VALUE);
+        stops[src] = 0;
 
         while (!pq.isEmpty()) {
             int[] current = pq.poll();
-            int node = current[0];
-            int price = current[1];
-            int stops = current[2];
+            int curNode = current[0];
+            int curPrice = current[1];
+            int curStops = current[2];
 
-            // 목적지 도달 시, 해당 경로의 비용 반환
-            if (node == dst) {
-                return price;
+            // 도착지에 도달하거나, 경유 횟수가 최대를 초과하는 경우
+            if (curNode == dst) {
+                return curPrice;
             }
 
-            // 경유 횟수가 k를 초과하면 더 이상 진행하지 않음
-            if (stops > k) continue;
+            if (curStops > k) {
+                continue;
+            }
 
-            // 인접 노드 탐색
-            for (int[] neighbor : adjacencyList.get(node)) {
+            // 이웃 노드를 탐색
+            for (int[] neighbor : adjacencyList.get(curNode)) {
                 int nextNode = neighbor[0];
-                int nextPrice = price + neighbor[1];
+                int newPrice = curPrice + neighbor[1];
 
-                // 더 적은 비용이거나, 동일한 경유 횟수로 더 적은 비용일 경우만 진행
-                if (nextPrice < minPrice[nextNode] || stops + 1 < minStops[nextNode]) {
-                    minPrice[nextNode] = nextPrice;
-                    minStops[nextNode] = stops + 1;
-                    pq.add(new int[]{nextNode, nextPrice, stops + 1});
+                // 새로운 경로가 더 저렴하면 갱신 및 큐에 추가
+                if (newPrice < prices[nextNode] || curStops + 1 < stops[nextNode]) {
+                    stops[nextNode] = newPrice;
+                    prices[nextNode] = newPrice;
+                    pq.add(new int[]{nextNode, newPrice, curStops + 1});
                 }
             }
         }
 
-        // 목적지에 도달할 수 없을 경우 -1 반환
         return -1;
     }
 }
