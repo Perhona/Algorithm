@@ -44,8 +44,8 @@ class Solution {
 
                 // 새로운 경로가 더 저렴하면 갱신 및 큐에 추가
                 if (newPrice < prices[nextNode] || curStops + 1 < stops[nextNode]) {
-                    stops[nextNode] = newPrice;
                     prices[nextNode] = newPrice;
+                    stops[nextNode] = curStops + 1;
                     pq.add(new int[]{nextNode, newPrice, curStops + 1});
                 }
             }
