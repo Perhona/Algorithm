@@ -1,10 +1,10 @@
 class Solution {
-    public int[][] merge(int[][] intervals) {
+    public int[][] merge(int[][] intervals) {   // 10ms
         Arrays.sort(intervals, Comparator.comparingInt(arr -> arr[0]));
         List<int[]> resultList = new ArrayList<>();
         dfs(resultList, intervals, intervals[0], 1 );
 
-        return listToArray(resultList);
+        return resultList.toArray(new int[resultList.size()][]);
     }
 
     private void dfs(List<int[]> result, int[][] arr, int[] a, int idx) {
@@ -26,15 +26,5 @@ class Solution {
         }
 
         dfs(result, arr, a, idx + 1);
-    }
-
-    public static int[][] listToArray(List<int[]> list) {
-        int[][] array = new int[list.size()][];
-
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-
-        return array;
     }
 }
