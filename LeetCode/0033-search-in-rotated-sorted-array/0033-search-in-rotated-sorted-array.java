@@ -6,7 +6,7 @@ class Solution {
         int[] originalNums = Arrays.copyOf(nums, nums.length); // nums 복사
 
         Arrays.sort(nums); // 정렬
-        int idx = bfs(nums, 0, (nums.length - 1) / 2, nums.length, target); // target의 정렬된 경우 index 찾기
+        int idx = bfs(nums, 0, (nums.length - 1) / 2, nums.length -1, target); // target의 정렬된 경우 index 찾기
         return idx == -1 ? -1 : IntStream
                 .range(0, originalNums.length)
                 .filter(i -> originalNums[i] == nums[idx])
