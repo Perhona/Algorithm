@@ -1,37 +1,25 @@
 class Solution {
     public int canCompleteCircuit(int[] gas, int[] cost) {
-        List<int[]> existGasList = new ArrayList<>();
-        int sum = 0;
-        for (int i = 0; i < gas.length; i++) {
-            int diff = gas[i] - cost[i];
-            existGasList.add(new int[]{i, diff});
-            sum += diff;
-        }
-        if (sum < 0) {
+        // 갈 수 없는 경우(gas량 보다 cost가 큰 경우) 
+        if (Arrays.stream(gas).sum() < Arrays.stream(cost).sum()) {
             return -1;
         }
 
-        Queue<int[]> gasQueue = new ArrayDeque<>(existGasList);
-        List<int[]> usedGasList = new ArrayList<>();
-        int[] result = new int[]{-1, 0};
-
-        while (!gasQueue.isEmpty()) {
-            int[] current = gasQueue.poll();
-            usedGasList.add(current);
-
-            if (result[0] == -1) {
-                result[0] = current[0];
-            }
-            result[1] += current[1];
-
-            // 잔여 가스가 0 이하이면 사용했던 가스 다시 큐에 add 후 재시쟉
-            if (result[1] <= 0 && usedGasList.size() != existGasList.size()) {
-                result[0] = -1;
-                result[1] = 0;
-                gasQueue.addAll(usedGasList);
-                usedGasList.clear();
+        int fuel = 0;
+        int startIdx = 0;
+        
+        // 한 번만 순회하면서 기존 gas양과 gas-cost 더하기
+        // 더한 값이 0 이하인 경우 기존 gas(fuel) 0으로 리셋 및 시작 인덱스 다음으로 설정
+        for (int i = 0; i < gas.length; i++) {
+            int diff = gas[i] - cost[i];
+            if (fuel + diff < 0) {
+                startIdx = i + 1;
+                fuel = 0;
+            } else {
+                fuel += diff;
             }
         }
-        return result[0];
+
+        return startIdx;
     }
 }
