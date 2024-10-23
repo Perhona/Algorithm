@@ -9,6 +9,6 @@ class Solution {
                 sum = 0;
             }
         }
-        return sums.stream().max(Comparator.comparingInt(o -> o)).get();
+        return Collections.max(sums);
     }
 }
