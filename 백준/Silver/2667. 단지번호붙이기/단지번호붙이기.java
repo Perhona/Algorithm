@@ -1,59 +1,78 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
-    public static int HOUSE_COUNT = 0;
-    public static int N = 0;
-    public static char[][] MAP;
+    static int N;
+    static int[][] houses;
+    static boolean[][] visited;
+    static List<Integer> result;
+
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {1, -1, 0, 0};
 
     public static void main(String[] args) throws IOException {
+        
+        /* 문제 조건 생성 */
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        MAP = new char[N][N];
-
-        // map에 입력받은 값 저장
+        houses = new int[N][N];
+        visited = new boolean[N][N];
+        result = new ArrayList<>();
+        
+        /* 그리드 초기화 */
         for (int i = 0; i < N; i++) {
-            String line = br.readLine();
+            String[] input = br.readLine().split("");
             for (int j = 0; j < N; j++) {
-                MAP[i][j] = line.charAt(j);
+                houses[i][j] = Integer.parseInt(input[j]);
             }
-        }
-
-        int groupCount = 0;
-        List<Integer> houses = new ArrayList<>();
-        // 행렬을 순회하며 집이 존재하면('1') 상하좌우 DFS 진행
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                HOUSE_COUNT = 0;
-                if (MAP[i][j] == '1') {
-                    dfs(i, j);
-                    groupCount++;
-                    houses.add(HOUSE_COUNT);
-                }
-            }
-
         }
         
-        // 출력
-        System.out.println(groupCount);
-        houses.stream().sorted().forEach(System.out::println);
+        /* 집 위치(단지)가 끊겨 있으므로 전체 그리드 탐색 */
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                /* 지도에 집이 존재하고 방문하지 않았을 때, 주변 탐색 시작 */
+                if (houses[i][j] != 0 && !visited[i][j]) {
+                    bfs(new int[]{i, j});
+                }
+            }
+        }
+        
+        /* 답 출력 */
+        Collections.sort(result);
+        System.out.println(result.size());
+        result.forEach(System.out::println);
     }
 
-    private static void dfs(int i, int j) {
-        if (i < 0 || j < 0 || i >= N || j >= N || MAP[i][j] == '0') {
-            return;
+    static void bfs(int[] position) {
+        /* 방문 수, 방문 위치 초기화 */
+        int houseCnt = 1;
+        visited[position[0]][position[1]] = true;
+
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(position);
+        
+        /* 상하좌우 순회 시작 */
+        while (!queue.isEmpty()) {
+            int[] currPosition = queue.poll();
+            int x = currPosition[0];
+            int y = currPosition[1];
+
+            for (int i = 0; i < 4; i++) {
+                int nextPosX = x + dx[i];
+                int nextPosY = y + dy[i];
+                if (isAvailableRange(nextPosX, nextPosY) && houses[nextPosX][nextPosY] != 0 && !visited[nextPosX][nextPosY]) {
+                    queue.add(new int[]{nextPosX, nextPosY});
+                    visited[nextPosX][nextPosY] = true;
+                    houseCnt++;
+                }
+            }
         }
+        result.add(houseCnt);
+    }
 
-        // 집을 발견한 경우 0 처리, 집의 수 + 1
-        MAP[i][j] = '0';
-        HOUSE_COUNT++;
-
-        dfs(i - 1, j);
-        dfs(i + 1, j);
-        dfs(i, j - 1);
-        dfs(i, j + 1);
+    static boolean isAvailableRange(int x, int y) {
+        return x >= 0 && y >= 0 && x < N && y < N;
     }
 }
