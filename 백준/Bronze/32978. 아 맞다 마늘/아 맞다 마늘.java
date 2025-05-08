@@ -10,15 +10,16 @@ public class Main {
         String[] ingredients = br.readLine().split(" ");
         String[] usedIngredients = br.readLine().split(" ");
 
-        Map<String, Boolean> cookingMap = new HashMap<>();
+        Arrays.sort(ingredients);
+        Arrays.sort(usedIngredients);
 
-        for (String used : usedIngredients) {
-            cookingMap.put(used, false);
-        }
+        for (int i = 0; i < N; i++) {
+            if (i == N - 1) {
+                System.out.println(ingredients[i]);
+            }
 
-        for (String original : ingredients) {
-            if (cookingMap.get(original) == null) {
-                System.out.println(original);
+            if (!ingredients[i].equals(usedIngredients[i])) {
+                System.out.println(ingredients[i]);
                 break;
             }
         }
