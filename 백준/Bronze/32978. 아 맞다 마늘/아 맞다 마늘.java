@@ -9,17 +9,16 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
         String[] ingredients = br.readLine().split(" ");
         String[] usedIngredients = br.readLine().split(" ");
-        Arrays.sort(ingredients);
-        boolean[] used = new boolean[N];
 
-        for (String usedIngredient : usedIngredients) {
-            int idx = Arrays.binarySearch(ingredients, usedIngredient);
-            used[idx] = true;
+        Map<String, Boolean> cookingMap = new HashMap<>();
+
+        for (String used : usedIngredients) {
+            cookingMap.put(used, false);
         }
 
-        for (int i = 0; i < used.length; i++) {
-            if (!used[i]) {
-                System.out.println(ingredients[i]);
+        for (String original : ingredients) {
+            if (cookingMap.get(original) == null) {
+                System.out.println(original);
                 break;
             }
         }
