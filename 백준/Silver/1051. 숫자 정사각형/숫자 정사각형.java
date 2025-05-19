@@ -25,23 +25,28 @@ public class Main {
             }
         }
 
-        int maxIdxDiff = 0; // 가장 큰 차 저장
+        int maxIdxDiff = 1; // 가장 큰 차 저장
         int result = 1;
+
+        /* 그리드 전체 탐색 */
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                int num = grid[i][j];
-                for (int k = j + 1; k < M; k++) {
-                    if (grid[i][k] == num && (k - j) > maxIdxDiff) {    // 우상단 체크 & 차이 비교
-                        int idxDiff = k - j;
-                        // 밑변 X좌표 유효성 && 값 체크
-                        int downX = i + idxDiff;
-                        if (downX < N && grid[downX][j] == num && grid[downX][k] == num) {
-                            maxIdxDiff = idxDiff;
-                            int length = idxDiff + 1;
-                            result = Math.max(result, length * length);
+                int num = grid[i][j];   // 탐색 대상 숫자
+                if (i + maxIdxDiff < N && j + maxIdxDiff < M) { // 그리드에 가장 큰 차 이상의 인덱스가 존재할 경우에만 
+                    for (int k = j + maxIdxDiff; k < M; k++) {   // maxIdxDiff 이후부터 탐색
+                        if (grid[i][k] == num) {    // 같은 숫자 발견
+                            int idxDiff = k - j;
+                            /* 밑변 X좌표 유효성 && 값 체크 */
+                            int downX = i + idxDiff;
+                            if (downX < N && grid[downX][j] == num && grid[downX][k] == num) {
+                                maxIdxDiff = idxDiff;
+                                int length = idxDiff + 1;
+                                result = Math.max(result, length * length);
+                            }
                         }
                     }
                 }
+
             }
         }
         System.out.println(result);
